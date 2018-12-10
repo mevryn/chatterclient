@@ -1,14 +1,17 @@
 package application;
 
+import network.Host;
+
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Chat extends JTextArea {
     private List<Message> chatHistory = new ArrayList<>();
-
-    public Chat() {
+    private Host host;
+    public Chat(Host host) {
         setEditable(false);
+        this.host = host;
     }
 
     @Override

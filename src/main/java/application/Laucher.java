@@ -39,12 +39,23 @@ public class Laucher extends JFrame {
 
     private void configureButton() {
         joinButton.setText("Join Chat");
+
         joinButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!(hostNameInput.getText().equals("") || portInput.getText().equals("") || nickNameInput.getText().equals("")))
-                    new MainWindow(new User(nickNameInput.getText()), new Host(hostNameInput.getText(), portInput.getText()), new Chat());
+                Host host = new Host(hostNameInput.getText(),portInput.getText());
+                if (!(hostNameInput.getText().equals("") || portInput.getText().equals("") || nickNameInput.getText().equals(""))|| host.getSocket()!=null)
+                    new MainWindow(new User(nickNameInput.getText()),host,new Chat(host));
+                else {
+                    new ErrorWindow("Some field are empty");
+                }
             }
         });
+    }
+    public void networkErrorPopup(String message){
+        JFrame networkError = new JFrame();
+        JLabel errorMessage = new JLabel(message);
+        networkError.add(errorMessage);
+        networkError.setVisible(true);
     }
 }

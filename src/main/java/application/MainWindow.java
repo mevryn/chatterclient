@@ -77,6 +77,7 @@ public class MainWindow extends JFrame {
             String textOfMessage = inputField.getText();
             Message message = new Message(user, textOfMessage);
             chat.sendMessage(message);
+            host.sendMessageToServer(message);
             inputField.setText("");
         }
     }

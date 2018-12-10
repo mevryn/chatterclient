@@ -1,9 +1,11 @@
 package network;
 
-import javax.swing.*;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import application.ErrorWindow;
+import application.Message;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -14,27 +16,24 @@ public class Host {
     private DataInputStream dis;
     private DataOutputStream dos;
     private Socket socket;
-
+    StringWriter writer = new StringWriter();
+    PrintWriter printWriter = new PrintWriter(writer);
     public Host(String hostname, String portNumber) {
         this.hostname = hostname;
         this.portNumber = portNumber;
         init();
     }
 
-    public DataInputStream getDis() {
-        return dis;
+    public String getHostname() {
+        return hostname;
     }
 
-    public void setDis(DataInputStream dis) {
-        this.dis = dis;
+    public String getPortNumber() {
+        return portNumber;
     }
 
-    public DataOutputStream getDos() {
-        return dos;
-    }
-
-    public void setDos(DataOutputStream dos) {
-        this.dos = dos;
+    public Socket getSocket() {
+        return socket;
     }
 
     private void init() {
@@ -45,13 +44,26 @@ public class Host {
             dis = new DataInputStream(socket.getInputStream());
             dos = new DataOutputStream(socket.getOutputStream());
         } catch (UnknownHostException uHE) {
-            JLabel textMassage = new JLabel();
-            textMassage.setText(uHE.getStackTrace().toString());
-            textMassage.setVisible(true);
+            uHE.printStackTrace(printWriter);
+            new ErrorWindow(writer.toString());
         } catch (IOException iOE) {
-            JLabel textMassage = new JLabel();
-            textMassage.setText(iOE.getStackTrace().toString());
-            textMassage.setVisible(true);
+            iOE.printStackTrace(printWriter);
+            new ErrorWindow(writer.toString());
         }
     }
-}
+
+    
+    public void sendMessageToServer(Message message) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String json = mapper.writeValueAsString(message);
+            dos.writeBytes(json);
+        }catch(JsonProcessingException e) {
+            e.printStackTrace(printWriter);
+            new ErrorWindow(writer.toString());
+        }catch(IOException iOE){
+            iOE.printStackTrace(printWriter);
+            new ErrorWindow(writer.toString());
+        }
+        }
+    }
