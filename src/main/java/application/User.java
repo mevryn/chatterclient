@@ -1,9 +1,10 @@
 package application;
 
 public class User {
-   private String nickName=new String();
-    public User(String nickName){
-        this.nickName=nickName;
+    private String nickName = new String();
+
+    public User(String nickName) {
+        this.nickName = nickName;
     }
 
     public String getNickName() {

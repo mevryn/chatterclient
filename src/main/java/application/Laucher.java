@@ -8,16 +8,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Laucher extends JFrame {
-        JTextField nickNameInput=new JTextField();
-        JTextField hostNameInput=new JTextField();
-        JTextField portInput=new JTextField();
-        GridLayout laucherLayout = new GridLayout(0,4);
-        JButton joinButton = new JButton();
-        Host host;
+    JTextField nickNameInput = new JTextField();
+    JTextField hostNameInput = new JTextField();
+    JTextField portInput = new JTextField();
+    GridLayout laucherLayout = new GridLayout(0, 4);
+    JButton joinButton = new JButton();
+    Host host;
+
     public Laucher() {
         defaultSetUp();
     }
-    private void defaultSetUp(){
+
+    private void defaultSetUp() {
         setLayout(laucherLayout);
         setSize(new Dimension(500, 100));
         setVisible(true);
@@ -30,10 +32,11 @@ public class Laucher extends JFrame {
         add(portInput);
         add(joinButton);
         configureButton();
-        nickNameInput.setPreferredSize(new Dimension(60,20));
-        hostNameInput.setPreferredSize(new Dimension(60,20));
-        portInput.setPreferredSize(new Dimension(40,20));
+        nickNameInput.setPreferredSize(new Dimension(60, 20));
+        hostNameInput.setPreferredSize(new Dimension(60, 20));
+        portInput.setPreferredSize(new Dimension(40, 20));
     }
+
     private void configureButton() {
         joinButton.setText("Join Chat");
         joinButton.addActionListener(new ActionListener() {

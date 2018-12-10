@@ -16,24 +16,27 @@ public class MainWindow extends JFrame {
     private Chat chat;
     private User user;
     private Host host;
-    public MainWindow(User user, Host host,Chat chat){
+
+    public MainWindow(User user, Host host, Chat chat) {
         this.chat = chat;
-        this.user=user;
-        this.host=host;
-        scrolledtextField= new JScrollPane(chat);
+        this.user = user;
+        this.host = host;
+        scrolledtextField = new JScrollPane(chat);
         pack();
-        this.setTitle("Chatter "+user.getNickName());
+        this.setTitle("Chatter " + user.getNickName());
         settingsSetUp();
         chatInterfaceSetUp();
         setVisible(true);
     }
-    private void settingsSetUp(){
+
+    private void settingsSetUp() {
         setResizable(false);
-        setSize(new Dimension(600,600));
+        setSize(new Dimension(600, 600));
         setLayout(chatLayout);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
-    private void chatInterfaceSetUp(){
+
+    private void chatInterfaceSetUp() {
 
         inputFieldSetUp();
         textFieldSetUp();
@@ -42,7 +45,8 @@ public class MainWindow extends JFrame {
         add(inputField);
         add(sendButton);
     }
-    private void sendButtonSetUp(){
+
+    private void sendButtonSetUp() {
         sendButton.setText("Send");
         sendButton.addActionListener(new ActionListener() {
             @Override
@@ -51,8 +55,9 @@ public class MainWindow extends JFrame {
             }
         });
     }
-    private void inputFieldSetUp(){
-        inputField.setPreferredSize(new Dimension (420,20));
+
+    private void inputFieldSetUp() {
+        inputField.setPreferredSize(new Dimension(420, 20));
         inputField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -60,11 +65,13 @@ public class MainWindow extends JFrame {
             }
         });
     }
-    private void textFieldSetUp(){
-        scrolledtextField.setPreferredSize(new Dimension(500,500));
+
+    private void textFieldSetUp() {
+        scrolledtextField.setPreferredSize(new Dimension(500, 500));
         scrolledtextField.createVerticalScrollBar();
         textField.setEditable(false);
     }
+
     private void sendMessage() {
         if (!inputField.getText().isEmpty()) {
             String textOfMessage = inputField.getText();
