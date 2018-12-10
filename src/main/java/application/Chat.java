@@ -9,6 +9,7 @@ import java.util.List;
 public class Chat extends JTextArea {
     private List<Message> chatHistory = new ArrayList<>();
     private Host host;
+
     public Chat(Host host) {
         setEditable(false);
         this.host = host;

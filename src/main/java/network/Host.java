@@ -18,6 +18,7 @@ public class Host {
     private Socket socket;
     StringWriter writer = new StringWriter();
     PrintWriter printWriter = new PrintWriter(writer);
+
     public Host(String hostname, String portNumber) {
         this.hostname = hostname;
         this.portNumber = portNumber;
@@ -52,18 +53,18 @@ public class Host {
         }
     }
 
-    
+
     public void sendMessageToServer(Message message) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             String json = mapper.writeValueAsString(message);
             dos.writeBytes(json);
-        }catch(JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             e.printStackTrace(printWriter);
             new ErrorWindow(writer.toString());
-        }catch(IOException iOE){
+        } catch (IOException iOE) {
             iOE.printStackTrace(printWriter);
             new ErrorWindow(writer.toString());
         }
-        }
     }
+}
