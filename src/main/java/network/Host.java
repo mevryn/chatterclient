@@ -4,6 +4,7 @@ import application.ErrorWindow;
 import application.Message;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -11,26 +12,23 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class Host {
-    private String hostname = new String();
-    private String portNumber = new String();
+
+    private String hostname;
+    private int portNumber;
+
     private DataInputStream dis;
     private DataOutputStream dos;
     private Socket socket;
-    StringWriter writer = new StringWriter();
-    PrintWriter printWriter = new PrintWriter(writer);
 
-    public Host(String hostname, String portNumber) {
+    private StringWriter writer = new StringWriter();
+    private PrintWriter printWriter = new PrintWriter(writer);
+
+    private ObjectMapper mapper = new ObjectMapper();
+
+    public Host(String hostname, int portNumber) {
         this.hostname = hostname;
         this.portNumber = portNumber;
         init();
-    }
-
-    public String getHostname() {
-        return hostname;
-    }
-
-    public String getPortNumber() {
-        return portNumber;
     }
 
     public Socket getSocket() {
@@ -40,8 +38,7 @@ public class Host {
     private void init() {
         try {
             InetAddress addr = InetAddress.getByName(this.hostname);
-            int port = Integer.parseInt(portNumber);
-            socket = new Socket(addr, port);
+            socket = new Socket(addr, portNumber);
             dis = new DataInputStream(socket.getInputStream());
             dos = new DataOutputStream(socket.getOutputStream());
         } catch (UnknownHostException uHE) {
@@ -55,9 +52,10 @@ public class Host {
 
 
     public void sendMessageToServer(Message message) {
-        ObjectMapper mapper = new ObjectMapper();
+
         try {
-            String json = mapper.writeValueAsString(message);
+            Gson gson = new Gson();
+            String json = gson.toJson(message);
             dos.writeBytes(json);
         } catch (JsonProcessingException e) {
             e.printStackTrace(printWriter);

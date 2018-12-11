@@ -1,7 +1,7 @@
 package application;
 
 public class User {
-    private String nickName = new String();
+    private final String nickName;
 
     public User(String nickName) {
         this.nickName = nickName;
@@ -11,12 +11,4 @@ public class User {
         return nickName;
     }
 
-    @Override
-    public String toString() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
 }

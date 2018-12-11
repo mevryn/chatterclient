@@ -1,19 +1,20 @@
 package application;
 
 import network.Host;
+import network.HostFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Laucher extends JFrame {
-    JTextField nickNameInput = new JTextField();
-    JTextField hostNameInput = new JTextField();
-    JTextField portInput = new JTextField();
-    GridLayout laucherLayout = new GridLayout(0, 4);
-    JButton joinButton = new JButton();
-    Host host;
+
+    private JTextField nickNameInput = new JTextField();
+    private JTextField hostNameInput = new JTextField();
+    private JTextField portInput = new JTextField();
+
+    private GridLayout laucherLayout = new GridLayout(0, 4);
+
+    private JButton joinButton = new JButton();
 
     public Laucher() {
         defaultSetUp();
@@ -39,24 +40,10 @@ public class Laucher extends JFrame {
 
     private void configureButton() {
         joinButton.setText("Join Chat");
-
-        joinButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Host host = new Host(hostNameInput.getText(), portInput.getText());
-                if (!(hostNameInput.getText().equals("") || portInput.getText().equals("") || nickNameInput.getText().equals("")) || host.getSocket() != null)
-                    new MainWindow(new User(nickNameInput.getText()), host, new Chat(host));
-                else {
-                    new ErrorWindow("Some field are empty");
-                }
-            }
+        joinButton.addActionListener(e -> {
+            Host host = HostFactory.newHostForConfiguration(hostNameInput.getText(), portInput.getText());
+            new MainWindow(new User(nickNameInput.getText()), new Chat(),host   );
         });
     }
 
-    public void networkErrorPopup(String message) {
-        JFrame networkError = new JFrame();
-        JLabel errorMessage = new JLabel(message);
-        networkError.add(errorMessage);
-        networkError.setVisible(true);
-    }
 }

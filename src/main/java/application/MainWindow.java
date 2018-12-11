@@ -4,38 +4,66 @@ import network.Host;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements  Subject{
     private JTextField inputField = new JTextField();
     private JTextArea textField = new JTextArea();
     private JScrollPane scrolledtextField;
     private FlowLayout chatLayout = new FlowLayout();
     private JButton sendButton = new JButton();
-    private Chat chat;
-    private User user;
-    private Host host;
 
-    public MainWindow(User user, Host host, Chat chat) {
-        this.chat = chat;
+    private StringWriter writer = new StringWriter();
+    private PrintWriter printWriter = new PrintWriter(writer);
+
+    private List<ChatListener> observers = new ArrayList<ChatListener>();
+
+    private Host host;
+    private User user;
+
+    public MainWindow(User user, Chat chat,Host host) {
         this.user = user;
         this.host = host;
         scrolledtextField = new JScrollPane(chat);
+        addListener(chat);
         pack();
         this.setTitle("Chatter " + user.getNickName());
+        closingOperation();
         settingsSetUp();
         chatInterfaceSetUp();
         setVisible(true);
     }
-
+    public void addListener(ChatListener chatListener){
+        observers.add(chatListener);
+    }
     private void settingsSetUp() {
         setResizable(false);
         setSize(new Dimension(600, 600));
         setLayout(chatLayout);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        closingOperation();
     }
 
+    private void closingOperation(){
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                try {
+                    if(host.getSocket()!=null)
+                    host.getSocket().close();
+                    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                }catch(IOException IOE) {
+                    IOE.printStackTrace(printWriter);
+                    new ErrorWindow(writer.toString());
+                }
+            }
+        });
+    }
     private void chatInterfaceSetUp() {
 
         inputFieldSetUp();
@@ -48,22 +76,12 @@ public class MainWindow extends JFrame {
 
     private void sendButtonSetUp() {
         sendButton.setText("Send");
-        sendButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sendMessage();
-            }
-        });
+        sendButton.addActionListener(e->newMessage());
     }
 
     private void inputFieldSetUp() {
         inputField.setPreferredSize(new Dimension(420, 20));
-        inputField.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sendMessage();
-            }
-        });
+        inputField.addActionListener(e -> newMessage());
     }
 
     private void textFieldSetUp() {
@@ -72,11 +90,25 @@ public class MainWindow extends JFrame {
         textField.setEditable(false);
     }
 
-    private void sendMessage() {
+    @Override
+    public void register(ChatListener chatListener){
+        observers.add(chatListener);
+    }
+    @Override
+    public void unregister(ChatListener chatListener){
+        observers.remove(chatListener);
+    }
+    @Override
+    public void notifyObservers(Message message){
+        for(ChatListener chatListener:observers){
+            chatListener.newMessageAppeared(message);
+        }
+    }
+    private void newMessage() {
         if (!inputField.getText().isEmpty()) {
             String textOfMessage = inputField.getText();
             Message message = new Message(user, textOfMessage);
-            chat.sendMessage(message);
+            notifyObservers(message);
             host.sendMessageToServer(message);
             inputField.setText("");
         }

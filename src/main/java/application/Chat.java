@@ -1,43 +1,52 @@
 package application;
 
-import network.Host;
-
 import javax.swing.*;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class Chat extends JTextArea {
-    private List<Message> chatHistory = new ArrayList<>();
-    private Host host;
+public class Chat extends JTextArea implements ChatListener {
+    private List<Message> chatHistory = new ArrayList<Message>();
 
-    public Chat(Host host) {
+    public Chat() {
         setEditable(false);
-        this.host = host;
+    }
+
+    private String parseDate(ZonedDateTime zonedDateTime) {
+        String time = zonedDateTime.format(DateTimeFormatter.ofPattern("HH:mm"));
+        return time;
+    }
+
+    private void sortMessages() {
+        Collections.sort(chatHistory, new Comparator<Message>() {
+            @Override
+            public int compare(Message o1, Message o2) {
+                if (o1.getTime().toLocalDateTime().isBefore(o2.getTime().toLocalDateTime())) {
+                    return -1;
+                } else if (o2.getTime().toLocalDateTime().isBefore(o1.getTime().toLocalDateTime())) {
+                    return 1;
+                } else
+                    return 0;
+            }
+        });
+    }
+
+    private String printChat() {
+        StringBuilder stringBuilder = new StringBuilder();
+        sortMessages();
+        for (Message message : chatHistory) {
+            stringBuilder.append(parseDate(message.getTime()) + " " + message.getUser().getNickName() + ": " + message.getMessage() + "\n");
+        }
+        return stringBuilder.toString();
     }
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (Message message : chatHistory) {
-            sb.append(message.toString());
-        }
-        return sb.toString();
-    }
-
-    public List<Message> getChatHistory() {
-        return chatHistory;
-    }
-
-    private void setChatHistory(List<Message> chatHistory) {
-        this.chatHistory = chatHistory;
-    }
-
-    private void chatSetUp() {
-        setText(chatHistory.toString());
-    }
-
-    public void sendMessage(Message message) {
+    public void newMessageAppeared(Message message) {
         chatHistory.add(message);
-        chatSetUp();
+        setText(printChat());
     }
+
 }
