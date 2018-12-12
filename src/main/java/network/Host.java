@@ -5,7 +5,6 @@ import application.Message;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import org.json.JSONString;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -20,20 +19,18 @@ public class Host {
     private DataInputStream dis;
     private DataOutputStream dos;
     private Socket socket;
-
-    public DataInputStream getDis() {
-        return dis;
-    }
-
     private StringWriter writer = new StringWriter();
     private PrintWriter printWriter = new PrintWriter(writer);
-
     private ObjectMapper mapper = new ObjectMapper();
 
     public Host(String hostname, int portNumber) {
         this.hostname = hostname;
         this.portNumber = portNumber;
         init();
+    }
+
+    public DataInputStream getDis() {
+        return dis;
     }
 
     public Socket getSocket() {
@@ -55,17 +52,17 @@ public class Host {
         }
     }
 
-    public Message receiveNewMessageFromServer(){
+    public Message receiveNewMessageFromServer() {
         try {
-            String output=dis.readUTF();
+            String output = dis.readUTF();
             Gson g = new Gson();
-            Message message =g.fromJson(output,Message.class);
+            Message message = g.fromJson(output, Message.class);
             return message;
-        }catch(IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace(printWriter);
             new ErrorWindow(writer.toString());
-        }return new Message(null,"");
+        }
+        return new Message(null, "");
     }
 
     public void sendMessageToServer(Message message) {

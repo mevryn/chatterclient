@@ -11,6 +11,12 @@ public class Message implements Serializable {
     private String message;
     private ZonedDateTime time;
 
+    public Message(User user, String message) {
+        this.user = user;
+        this.message = message;
+        this.time = ZonedDateTime.now(ZoneId.systemDefault());
+    }
+
     protected User getUser() {
         return user;
     }
@@ -21,13 +27,6 @@ public class Message implements Serializable {
 
     protected ZonedDateTime getTime() {
         return time;
-    }
-
-
-    public Message(User user, String message) {
-        this.user = user;
-        this.message = message;
-        this.time = ZonedDateTime.now(ZoneId.systemDefault());
     }
 
 

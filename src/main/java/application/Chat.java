@@ -1,40 +1,25 @@
 package application;
 
-import network.Host;
-
 import javax.swing.*;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class Chat extends JTextArea implements ChatListener {
-    private List<Message> chatHistory = new ArrayList<Message>();
-    private Host host;
-    public Chat(Host host) {
-        this.host = host;
+    private List<Message> chatHistory = new ArrayList<>();
+
+    protected Chat() {
         setEditable(false);
     }
 
     private String parseDate(ZonedDateTime zonedDateTime) {
-        String time = zonedDateTime.format(DateTimeFormatter.ofPattern("HH:mm"));
-        return time;
+        return zonedDateTime.format(DateTimeFormatter.ofPattern("HH:mm"));
     }
 
     private void sortMessages() {
-        Collections.sort(chatHistory, new Comparator<Message>() {
-            @Override
-            public int compare(Message o1, Message o2) {
-                if (o1.getTime().toLocalDateTime().isBefore(o2.getTime().toLocalDateTime())) {
-                    return -1;
-                } else if (o2.getTime().toLocalDateTime().isBefore(o1.getTime().toLocalDateTime())) {
-                    return 1;
-                } else
-                    return 0;
-            }
-        });
+        chatHistory.sort(Comparator.comparing(Message::getTime));
     }
 
     private String printChat() {
@@ -51,9 +36,9 @@ public class Chat extends JTextArea implements ChatListener {
         chatHistory.add(message);
         setText(printChat());
     }
-    @Override
+  /*  @Override
     public void getNewMessage(){
         chatHistory.add(host.receiveNewMessageFromServer());
         setText(printChat());
-    }
+    }*/
 }

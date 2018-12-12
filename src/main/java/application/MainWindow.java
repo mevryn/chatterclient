@@ -7,7 +7,6 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -23,12 +22,12 @@ public class MainWindow extends JFrame implements Subject {
     private StringWriter writer = new StringWriter();
     private PrintWriter printWriter = new PrintWriter(writer);
 
-    private List<ChatListener> observers = new ArrayList<ChatListener>();
+    private List<ChatListener> observers = new ArrayList<>();
 
     private Host host;
     private User user;
 
-    public MainWindow(User user, Chat chat, Host host) {
+    protected MainWindow(User user, Chat chat, Host host) {
         this.user = user;
         this.host = host;
         scrolledtextField = new JScrollPane(chat);
@@ -36,13 +35,12 @@ public class MainWindow extends JFrame implements Subject {
         pack();
         this.setTitle("Chatter " + user.getNickName());
         closingOperation();
-        observers.get(0).getNewMessage();
         settingsSetUp();
         chatInterfaceSetUp();
         setVisible(true);
     }
 
-    public void addListener(ChatListener chatListener) {
+    private void addListener(ChatListener chatListener) {
         observers.add(chatListener);
     }
 
@@ -52,6 +50,7 @@ public class MainWindow extends JFrame implements Subject {
         setLayout(chatLayout);
         closingOperation();
     }
+
     private void closingOperation() {
         this.addWindowListener(new WindowAdapter() {
             @Override
