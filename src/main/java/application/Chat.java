@@ -1,5 +1,7 @@
 package application;
 
+import network.Host;
+
 import javax.swing.*;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -10,8 +12,9 @@ import java.util.List;
 
 public class Chat extends JTextArea implements ChatListener {
     private List<Message> chatHistory = new ArrayList<Message>();
-
-    public Chat() {
+    private Host host;
+    public Chat(Host host) {
+        this.host = host;
         setEditable(false);
     }
 
@@ -48,5 +51,9 @@ public class Chat extends JTextArea implements ChatListener {
         chatHistory.add(message);
         setText(printChat());
     }
-
+    @Override
+    public void getNewMessage(){
+        chatHistory.add(host.receiveNewMessageFromServer());
+        setText(printChat());
+    }
 }

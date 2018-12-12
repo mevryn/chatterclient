@@ -11,20 +11,20 @@ public class Message implements Serializable {
     private String message;
     private ZonedDateTime time;
 
-    public User getUser() {
+    protected User getUser() {
         return user;
     }
 
-    public String getMessage() {
+    protected String getMessage() {
         return message;
     }
 
-    public ZonedDateTime getTime() {
+    protected ZonedDateTime getTime() {
         return time;
     }
 
 
-    Message(User user, String message) {
+    public Message(User user, String message) {
         this.user = user;
         this.message = message;
         this.time = ZonedDateTime.now(ZoneId.systemDefault());

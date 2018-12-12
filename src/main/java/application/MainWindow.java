@@ -7,12 +7,13 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainWindow extends JFrame implements  Subject{
+public class MainWindow extends JFrame implements Subject {
     private JTextField inputField = new JTextField();
     private JTextArea textField = new JTextArea();
     private JScrollPane scrolledtextField;
@@ -27,7 +28,7 @@ public class MainWindow extends JFrame implements  Subject{
     private Host host;
     private User user;
 
-    public MainWindow(User user, Chat chat,Host host) {
+    public MainWindow(User user, Chat chat, Host host) {
         this.user = user;
         this.host = host;
         scrolledtextField = new JScrollPane(chat);
@@ -35,35 +36,38 @@ public class MainWindow extends JFrame implements  Subject{
         pack();
         this.setTitle("Chatter " + user.getNickName());
         closingOperation();
+        observers.get(0).getNewMessage();
         settingsSetUp();
         chatInterfaceSetUp();
         setVisible(true);
     }
-    public void addListener(ChatListener chatListener){
+
+    public void addListener(ChatListener chatListener) {
         observers.add(chatListener);
     }
+
     private void settingsSetUp() {
         setResizable(false);
         setSize(new Dimension(600, 600));
         setLayout(chatLayout);
         closingOperation();
     }
-
-    private void closingOperation(){
+    private void closingOperation() {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 try {
-                    if(host.getSocket()!=null)
-                    host.getSocket().close();
+                    if (host.getSocket() != null)
+                        host.getSocket().close();
                     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                }catch(IOException IOE) {
+                } catch (IOException IOE) {
                     IOE.printStackTrace(printWriter);
                     new ErrorWindow(writer.toString());
                 }
             }
         });
     }
+
     private void chatInterfaceSetUp() {
 
         inputFieldSetUp();
@@ -76,7 +80,7 @@ public class MainWindow extends JFrame implements  Subject{
 
     private void sendButtonSetUp() {
         sendButton.setText("Send");
-        sendButton.addActionListener(e->newMessage());
+        sendButton.addActionListener(e -> newMessage());
     }
 
     private void inputFieldSetUp() {
@@ -91,19 +95,22 @@ public class MainWindow extends JFrame implements  Subject{
     }
 
     @Override
-    public void register(ChatListener chatListener){
+    public void register(ChatListener chatListener) {
         observers.add(chatListener);
     }
+
     @Override
-    public void unregister(ChatListener chatListener){
+    public void unregister(ChatListener chatListener) {
         observers.remove(chatListener);
     }
+
     @Override
-    public void notifyObservers(Message message){
-        for(ChatListener chatListener:observers){
+    public void notifyObservers(Message message) {
+        for (ChatListener chatListener : observers) {
             chatListener.newMessageAppeared(message);
         }
     }
+
     private void newMessage() {
         if (!inputField.getText().isEmpty()) {
             String textOfMessage = inputField.getText();

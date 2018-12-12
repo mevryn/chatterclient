@@ -42,7 +42,7 @@ public class Laucher extends JFrame {
         joinButton.setText("Join Chat");
         joinButton.addActionListener(e -> {
             Host host = HostFactory.newHostForConfiguration(hostNameInput.getText(), portInput.getText());
-            new MainWindow(new User(nickNameInput.getText()), new Chat(),host   );
+            new MainWindow(new User(nickNameInput.getText()), new Chat(host),host);
         });
     }
 
