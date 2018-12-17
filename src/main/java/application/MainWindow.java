@@ -26,10 +26,12 @@ public class MainWindow extends JFrame implements Subject {
 
     private Host host;
     private User user;
+    private Chat chat;
 
     protected MainWindow(User user, Chat chat, Host host) {
         this.user = user;
         this.host = host;
+        this.chat = chat;
         scrolledtextField = new JScrollPane(chat);
         addListener(chat);
         pack();
@@ -38,6 +40,8 @@ public class MainWindow extends JFrame implements Subject {
         settingsSetUp();
         chatInterfaceSetUp();
         setVisible(true);
+        new Thread(() -> notifyObservers(host.receiveNewMessageFromServer())).start();
+
     }
 
     private void addListener(ChatListener chatListener) {
@@ -119,4 +123,5 @@ public class MainWindow extends JFrame implements Subject {
             inputField.setText("");
         }
     }
+
 }
