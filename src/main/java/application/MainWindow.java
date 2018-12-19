@@ -79,7 +79,7 @@ public class MainWindow extends JFrame implements Subject {
                 try {
                     if (host.getSocket() != null)
                         host.getSocket().close();
-                    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 } catch (IOException IOE) {
                     IOE.printStackTrace(printWriter);
                     new ErrorWindow(writer.toString());
