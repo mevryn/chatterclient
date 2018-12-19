@@ -9,6 +9,7 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,10 +19,10 @@ public class MainWindow extends JFrame implements Subject {
     private JScrollPane scrolledtextField;
     private FlowLayout chatLayout = new FlowLayout();
     private JButton sendButton = new JButton();
+    private JButton receiveFile = new JButton();
 
     private StringWriter writer = new StringWriter();
     private PrintWriter printWriter = new PrintWriter(writer);
-
     private List<ChatListener> observers = new ArrayList<>();
 
     private Host host;
@@ -39,11 +40,27 @@ public class MainWindow extends JFrame implements Subject {
         closingOperation();
         settingsSetUp();
         chatInterfaceSetUp();
+        configureFileButton();
         setVisible(true);
-        new Thread(() -> notifyObservers(host.receiveNewMessageFromServer())).start();
+        new Thread(() -> threadLoop()).start();
 
     }
 
+    private  void configureFileButton (){
+        receiveFile.setText("Request File from server");
+        receiveFile.setVisible(true);
+        add(receiveFile);
+                receiveFile.addActionListener(e -> {
+                host.requestFile();
+                chat.append("Big file requested");
+            });
+
+    }
+    protected void threadLoop(){
+        while(true) {
+            notifyObservers(host.receiveNewMessageFromServer());
+        }
+    }
     private void addListener(ChatListener chatListener) {
         observers.add(chatListener);
     }
@@ -110,7 +127,14 @@ public class MainWindow extends JFrame implements Subject {
     @Override
     public void notifyObservers(Message message) {
         for (ChatListener chatListener : observers) {
+            if(!(message==null))
             chatListener.newMessageAppeared(message);
+            else {
+                Message nullMessage = new Message();
+                nullMessage.setUser(new User("Client"));
+                nullMessage.setTime(ZonedDateTime.now());
+                nullMessage.setMessage("File Recaived");
+            }
         }
     }
 
